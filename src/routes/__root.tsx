@@ -7,10 +7,23 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import { useEffect, type ReactNode, createContext, useContext, useRef } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import backgroundSong from "../images/song.mp4";
+
+export const AudioContext = createContext<{
+  backgroundAudioRef: React.RefObject<HTMLAudioElement | null>;
+} | null>(null);
+
+export const useAudioContext = () => {
+  const context = useContext(AudioContext);
+  if (!context) {
+    throw new Error("useAudioContext must be used within AudioContext provider");
+  }
+  return context;
+};
 
 function NotFoundComponent() {
   return (
@@ -118,11 +131,15 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
+      <AudioContext.Provider value={{ backgroundAudioRef: audioRef }}>
+        <audio ref={audioRef} src={backgroundSong} preload="auto" autoPlay loop volume={0.35} />
+        {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+        <Outlet />
+      </AudioContext.Provider>
     </QueryClientProvider>
   );
 }

@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { motion, useScroll, useTransform } from "motion/react";
 import { useEffect, useRef, useState } from "react";
+import { useAudioContext } from "./__root";
 import { Heart, Sparkles, Gift, Cake, Star, Music } from "lucide-react";
 import { BirthdayRain } from "@/components/BirthdayRain";
 import { PhotoFrame } from "@/components/PhotoFrame";
@@ -113,6 +114,7 @@ function getAgeParts(now: Date) {
 }
 
 function Index() {
+  const { backgroundAudioRef } = useAudioContext();
   const heroRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
   const heroY = useTransform(scrollYProgress, [0, 1], [0, 300]);
@@ -229,7 +231,7 @@ function Index() {
               transition={{ duration: 1 }}
             >
               <p className="mb-4 font-mono text-sm uppercase tracking-[0.4em] text-pink-bright">chapter one</p>
-              <h2 className="font-display text-5xl italic text-gradient-pink md:text-7xl">a little letter</h2>
+              <h2 className="font-display text-5xl italic text-gradient-pink md:text-7xl">A little letter</h2>
               <div className="mx-auto mt-12 space-y-6 font-display text-2xl leading-relaxed text-foreground/90 md:text-3xl">
                 <p>i couldn't fit you into a card.</p>
                 <p>so i built you a <span className="text-gradient-pink font-bold">whole tiny universe</span> instead.</p>
@@ -448,7 +450,7 @@ function Index() {
               </h3>
               <p className="mt-6 text-lg text-muted-foreground">drag the polaroids around. shuffle them. stack them. they're yours now.</p>
               <div className="mt-10">
-                <NowPlaying />
+                <NowPlaying backgroundAudioRef={backgroundAudioRef} />
               </div>
             </div>
             <PolaroidStack />

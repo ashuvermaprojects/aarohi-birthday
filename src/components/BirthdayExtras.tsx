@@ -9,6 +9,7 @@ import img6 from "@/images/img6.png";
 import img7 from "@/images/img7.png";
 import img8 from "@/images/img8.png";
 import { Video } from "lucide-react";
+import song2 from "@/images/song2.mp4";
 
 // Trails pink hearts/sparkles after the cursor
 export function CursorTrail() {
@@ -172,17 +173,64 @@ export function PolaroidStack() {
 }
 
 // Mock music player
-export function NowPlaying() {
+export function NowPlaying({ backgroundAudioRef }: { backgroundAudioRef: React.RefObject<HTMLAudioElement | null> }) {
   const [playing, setPlaying] = useState(false);
+  const song2Ref = useRef<HTMLAudioElement | null>(null);
+
+  const handlePlayPause = () => {
+    const audio = song2Ref.current;
+    const bgAudio = backgroundAudioRef.current;
+
+    if (!audio || !bgAudio) return;
+
+    if (playing) {
+      // Stop song2 and resume background
+      audio.pause();
+      audio.currentTime = 0;
+      bgAudio.play().catch(() => {
+        // audio play may be blocked
+      });
+      setPlaying(false);
+    } else {
+      // Start song2 and pause background
+      bgAudio.pause();
+      audio.currentTime = 0;
+      audio.play().catch(() => {
+        // audio play may be blocked
+      });
+      setPlaying(true);
+    }
+  };
+
+  useEffect(() => {
+    const audio = song2Ref.current;
+    const bgAudio = backgroundAudioRef.current;
+
+    if (!audio) return;
+
+    const handleSongEnd = () => {
+      setPlaying(false);
+      if (bgAudio) {
+        bgAudio.play().catch(() => {
+          // audio play may be blocked
+        });
+      }
+    };
+
+    audio.addEventListener("ended", handleSongEnd);
+    return () => audio.removeEventListener("ended", handleSongEnd);
+  }, [backgroundAudioRef]);
+
   return (
     <div className="mx-auto flex w-full max-w-md items-center gap-5 rounded-full border border-pink-bright/40 bg-card/70 p-3 pr-6 backdrop-blur-md" style={{ boxShadow: "var(--shadow-glow)" }}>
       <button
-        onClick={() => setPlaying((p) => !p)}
+        onClick={handlePlayPause}
         className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full text-2xl text-primary-foreground"
         style={{ background: "var(--gradient-pink)" }}
       >
         {playing ? "❚❚" : "▶"}
       </button>
+      <audio ref={song2Ref} src={song2} preload="auto" />
       <div className="min-w-0 flex-1">
         <p className="truncate font-display text-lg text-foreground">The line of song perfectly fits on you</p>
         <div className="mt-2 flex items-center gap-2">
