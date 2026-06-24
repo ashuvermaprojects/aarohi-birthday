@@ -19,7 +19,7 @@ function reportLovableError(error, context = {}) {
 	});
 }
 //#endregion
-//#region src/images/song.mp4
+//#region src/images/song.mp3
 var song_default = "/assets/song-CjkDmi72.mp4";
 //#endregion
 //#region src/routes/__root.tsx

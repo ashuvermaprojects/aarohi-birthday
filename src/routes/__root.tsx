@@ -11,7 +11,7 @@ import { useEffect, type ReactNode, createContext, useContext, useRef } from "re
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
-import backgroundSong from "../images/song.mp4";
+import backgroundSong from "../images/song.mp3";
 
 export const AudioContext = createContext<{
   backgroundAudioRef: React.RefObject<HTMLAudioElement | null>;
