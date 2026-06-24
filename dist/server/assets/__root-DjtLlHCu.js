@@ -169,6 +169,26 @@ function RootShell({ children }) {
 function RootComponent() {
 	const { queryClient } = Route.useRouteContext();
 	const audioRef = useRef(null);
+	const interactionListener = useRef();
+	useEffect(() => {
+		const audio = audioRef.current;
+		if (!audio) return;
+		audio.volume = .35;
+		const handleInteraction = () => {
+			audio.play().catch(() => {});
+			window.removeEventListener("pointerdown", interactionListener.current);
+			window.removeEventListener("keydown", interactionListener.current);
+		};
+		interactionListener.current = handleInteraction;
+		window.addEventListener("pointerdown", handleInteraction, { once: true });
+		window.addEventListener("keydown", handleInteraction, { once: true });
+		return () => {
+			if (interactionListener.current) {
+				window.removeEventListener("pointerdown", interactionListener.current);
+				window.removeEventListener("keydown", interactionListener.current);
+			}
+		};
+	}, []);
 	return /* @__PURE__ */ jsx(QueryClientProvider, {
 		client: queryClient,
 		children: /* @__PURE__ */ jsxs(AudioContext.Provider, {
@@ -179,7 +199,7 @@ function RootComponent() {
 				preload: "auto",
 				autoPlay: true,
 				loop: true,
-				volume: .35
+				playsInline: true
 			}), /* @__PURE__ */ jsx(Outlet, {})]
 		})
 	});

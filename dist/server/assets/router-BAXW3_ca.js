@@ -1,8 +1,8 @@
-import { t as Route$1 } from "./__root-D6ZxMpIV.js";
+import { t as Route$1 } from "./__root-DjtLlHCu.js";
 import { createFileRoute, createRouter, lazyRouteComponent } from "@tanstack/react-router";
 import { QueryClient } from "@tanstack/react-query";
 //#region src/routes/index.tsx
-var $$splitComponentImporter = () => import("./routes-DLDNeQ_t.js");
+var $$splitComponentImporter = () => import("./routes-ffnB-mJn.js");
 //#endregion
 //#region src/routeTree.gen.ts
 var rootRouteChildren = { IndexRoute: createFileRoute("/")({
