@@ -132,11 +132,39 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const interactionListener = useRef<() => void>();
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    // Ensure volume is set correctly on the audio element.
+    audio.volume = 0.35;
+
+    const handleInteraction = () => {
+      audio.play().catch(() => {
+        // Browser may still block playback until a user gesture.
+      });
+      window.removeEventListener("pointerdown", interactionListener.current!);
+      window.removeEventListener("keydown", interactionListener.current!);
+    };
+
+    interactionListener.current = handleInteraction;
+    window.addEventListener("pointerdown", handleInteraction, { once: true });
+    window.addEventListener("keydown", handleInteraction, { once: true });
+
+    return () => {
+      if (interactionListener.current) {
+        window.removeEventListener("pointerdown", interactionListener.current);
+        window.removeEventListener("keydown", interactionListener.current);
+      }
+    };
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
       <AudioContext.Provider value={{ backgroundAudioRef: audioRef }}>
-        <audio ref={audioRef} src={backgroundSong} preload="auto" autoPlay loop volume={0.35} />
+        <audio ref={audioRef} src={backgroundSong} preload="auto" autoPlay loop playsInline />
         {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
         <Outlet />
       </AudioContext.Provider>
